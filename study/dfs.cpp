@@ -1,68 +1,49 @@
 #include <iostream>
-
+#include <queue>
 using namespace std;
 
-int map[10010][10010];
-int visited[1001];
-int queue[3000];
-int N, M, V;
 
-void DFS(int start)
+int n,m,v;
+int adj[1005][1005];
+int vis[1005];
+
+void dfs(int cur)
 {
-	visited[start] = 1;
-	cout << start << " ";
-	for (int i = 1; i < N + 1; i++)
-	{
-		if ((map[start][i] == 1) && !visited[i]) {
-			DFS(i);
-		}
+	cout << cur << " ";
+	vis[cur]=1;
+	for(int i=1; i<=n; ++i){
+		if(adj[cur][i] && !vis[i]){
+			dfs(i);
+		}   
 	}
 }
 
-void BFS(int start) 
+void bfs(int src)
 {
-	int front = 1, rear = 1;
-	queue[1] = start;
-	rear++;
-
-	visited[start] = 1;
-	int cur;
-	while (front < rear)
-	{
-		cur = queue[front];
-		front++;
-		cout << cur << " ";
-		for (int i = 1; i < N + 1; i++)
-		{
-			if (map[cur][i] && !visited[i]) {
-				queue[rear] = i;
-				rear++;
-				visited[i] = 1;
+	queue<int> q;
+	q.push(src);
+	vis[src]=2;
+	while(!q.empty()){
+		int cur=q.front();
+		printf("%d ",cur);
+		q.pop();
+		for(int i=1; i <= n; ++i){
+			if(adj[cur][i] && vis[i]!=2){
+				vis[i] = 2;
+				q.push(i);
 			}
 		}
 	}
 }
-
-int main(void)
+int main()
 {
-	for (int i = 0; i <= 10010; i++)
-		for (int j = 0; j <= 10010; j++)
-			map[i][j] = 0;
-	for (int i = 1; i <= 1001; i++)
-		visited[i] = 0;
-
-	cin >> N >> M >> V;
-
-	int start, end;
-	for (int i = 1; i < M + 1; i++)
-	{
-		cin >> start >> end;
-		map[start][end] = 1;
+	cin >> n >> m >> v;
+	for(int i=0; i < m; ++i){
+		int x,y;
+		cin >> x >> y;
+		adj[x][y] = adj[y][x] = 1;
 	}
-	DFS(V);
+	dfs(v);
 	cout << endl;
-	for (int i = 1; i <= 1001; i++)
-		visited[i] = 0;
-	BFS(V);
-	return 0;
+	bfs(v);
 }

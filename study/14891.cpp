@@ -12,6 +12,8 @@ vector<int> fourth;
 vector<vector<int> > wheels;
 int N;
 vector<pair<int, int> > moves;
+vector<pair<int, int> > rotateInfoR;
+vector<pair<int, int> > rotateInfoL;
 
 //for debugging purpose
 void printer(int num){
@@ -31,100 +33,97 @@ void printer2(){
 */
 
 void rotateCCW(int num){
-	int firstOne = wheels[num - 1][0]; wheels[num - 1].erase(wheels[num - 1].begin() + 1);
-	wheels[num - 1].push_back(firstOne);
+    //cout << "CCW " << num << endl;
+	int firstOne = wheels[num][0];
+    wheels[num].erase(wheels[num].begin());
+	wheels[num].push_back(firstOne);
 }
 
 void rotateCW(int num){
-	int lastOne = wheels[num - 1][wheels[num - 1].size() - 1];
-	wheels[num - 1].insert(wheels[num - 1].begin(), lastOne);
-	wheels[num - 1].erase(wheels[num - 1].end() - 1);
+ 	int lastOne = wheels[num][wheels[num].size() - 1];
+	wheels[num].insert(wheels[num].begin(), lastOne);
+	wheels[num].erase(wheels[num].end() - 1);
+    //printer(2);
 }
 
-//wheelNum == wheel number must be > 0, ex)1,2,3
-void doNext(int wheelNum, int prevRotate)
-{
-	cout << "next start" << endl;
-	while (wheelNum < 4){
-		if (wheels[wheelNum][6] != wheels[wheelNum - 1][2]){
-			break;
-		}
-		else{
-			prevRotate = prevRotate * -1;
-			if (prevRotate == 1)
-				rotateCW(wheelNum + 1);
-			else
-				rotateCCW(wheelNum + 1);
-		}
-		wheelNum ++;
-		cout << "-----------------------------------" << endl;
-		printer(1); printer(2); printer(3); printer(4);
-	}
+void doNext(int curWheel, int rotation){
+    int index = curWheel + 1;
+    for (int i = index; i < 4; ++i){
+        rotation = rotation * -1;
+        if (wheels[i][6] != wheels[i - 1][2]){
+            rotateInfoR.push_back(make_pair(i, rotation));
+        }
+        else{
+            break;
+        }
+    }
 }
 
-void doPrev(int wheelNum, int prevRotate)
-{
-	cout << "prev start" << endl;
-	while (wheelNum > 0){
-		if (wheels[wheelNum][2] != wheels[wheelNum + 1][6]){
-			break;
-		}
-		else{
-			prevRotate = prevRotate * -1;
-			if (prevRotate == 1)
-				rotateCW(wheelNum + 1);
-			else
-				rotateCCW(wheelNum + 1);
-		}
-		wheelNum --;
-		cout << "-----------------------------------" << endl;
-		printer(1); printer(2); printer(3); printer(4);
-	}
+void doPrev(int curWheel, int rotation){
+    int index = curWheel - 1;
+    for (int i = index; i >= 0; --i){
+        rotation = rotation * -1;
+        if (wheels[i][2] != wheels[i + 1][6]){
+            rotateInfoL.push_back(make_pair(i, rotation));
+        }
+        else{
+            break;
+        }
+    }
+}
+
+void rotateWheel(int cur, int rotation){
+    for (int i = 0; i < rotateInfoL.size(); ++i){
+        if (rotateInfoL[i].second == 1){
+            rotateCW(rotateInfoL[i].first);
+        }
+        else if (rotateInfoL[i].second == -1){
+            rotateCCW(rotateInfoL[i].first);
+        }
+    }
+    for (int i = 0; i < rotateInfoR.size(); ++i){
+        if (rotateInfoR[i].second == 1){
+            rotateCW(rotateInfoR[i].first);
+        }
+        else if (rotateInfoR[i].second == -1){
+            rotateCCW(rotateInfoR[i].first);
+        }
+    }
+    if (rotation == 1)
+        rotateCW(cur);
+    else if (rotation == -1)
+        rotateCCW(cur);
 }
 
 void solve(){
-	/*
-	printer(1);
-	rotateCCW(1);
-	printer(1);
-	rotateCCW(1);
-	printer(1);
-	*/
-	for (int i = 0; i < moves.size(); ++i){
-		int curRotate;
-		if (moves[i].second == 1){
-			//rotate CW
-			curRotate = 1;
-			rotateCW(moves[i].first);
-		}
-		else if (moves[i].second == -1){
-			//rotate CCW
-			curRotate = -1;
-			rotateCW(moves[i].first);
-		}
-		cout << "begin cycle" << endl;
-		cout << "-----------------------------------" << endl;
-		printer(1); printer(2); printer(3); printer(4);
-		doNext(moves[i].first, curRotate);
-		doPrev(moves[i].first - 1, curRotate);
-		cout << "done" << endl;
-	}
-	int score = 0;
-	if (wheels[0][0] == 1)
-		score += 1;
-	if (wheels[1][0] == 1)
-		score += 2;
-	if (wheels[2][0] == 1)
-		score += 4;
-	if (wheels[3][0] == 1)
-		score += 8;
-
-	cout << score << endl;
+    for (int i = 0; i < moves.size(); ++i){
+        doNext(moves[i].first - 1, moves[i].second);
+        doPrev(moves[i].first - 1, moves[i].second);
+        rotateWheel(moves[i].first - 1, moves[i].second);
+        rotateInfoL.clear();
+        rotateInfoR.clear();
+    }
 }
 
+void calculate(){
+    int score = 0;
+    if (wheels[0][0] == 1){
+        score += 1;
+    }
+    if (wheels[1][0] == 1){
+        score += 2;
+    }
+    if (wheels[2][0] == 1){
+        score += 4;
+    }
+    if (wheels[3][0] == 1){
+        score += 8;
+    }
+    cout << score << endl;
+}
 int main(){
 	wheels.push_back(first); wheels.push_back(second); wheels.push_back(third); wheels.push_back(fourth);
-	ifstream cin("input.txt");
+	//ifstream cin("input.txt");
 	char number;
 	int threePos, ninePos;
 	for (int i = 0; i < 4; ++i){
@@ -137,9 +136,9 @@ int main(){
 	int fi, se;
 	for (int i = 0; i < N; ++i){
 		cin >> fi >> se;
-		moves.push_back(make_pair(fi, se));
+        moves.push_back(make_pair(fi, se));
 	}
 	solve();
-
+    calculate();
 	return 0;
 }

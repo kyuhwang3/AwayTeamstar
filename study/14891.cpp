@@ -10,7 +10,7 @@ vector<int> second;
 vector<int> third;
 vector<int> fourth;
 vector<vector<int> > wheels;
-int N;
+int N; int T;
 vector<pair<int, int> > moves;
 vector<pair<int, int> > rotateInfoR;
 vector<pair<int, int> > rotateInfoL;
@@ -105,7 +105,7 @@ void solve(){
     }
 }
 
-void calculate(){
+void calculate(int num){
     int score = 0;
     if (wheels[0][0] == 1){
         score += 1;
@@ -119,12 +119,16 @@ void calculate(){
     if (wheels[3][0] == 1){
         score += 8;
     }
-    cout << score << endl;
+    cout << "#" << num << " " << score << endl;
 }
 int main(){
+    //ifstream cin("input.txt");
+    cin >> T;
+    for (int i = 0; i < T; ++i){
+        cin >> N;
+        wheels.clear(); first.clear(); second.clear(); third.clear(); fourth.clear(); moves.clear(); rotateInfoR.clear(); rotateInfoL.clear();
 	wheels.push_back(first); wheels.push_back(second); wheels.push_back(third); wheels.push_back(fourth);
-	//ifstream cin("input.txt");
-	char number;
+    char number; char garbage;
 	int threePos, ninePos;
 	for (int i = 0; i < 4; ++i){
 		for (int j = 0; j < 8; ++j){
@@ -132,13 +136,16 @@ int main(){
 			wheels[i].push_back(number - '0');
 		}
 	}
-	cin >> N;
+        //printer(1);
+        
 	int fi, se;
 	for (int i = 0; i < N; ++i){
 		cin >> fi >> se;
         moves.push_back(make_pair(fi, se));
 	}
 	solve();
-    calculate();
+    calculate(i + 1);
+        
+    }
 	return 0;
 }

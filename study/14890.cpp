@@ -1,5 +1,5 @@
 #include <iostream>
-#include <bits/stdc++.h>
+#include <fstream>
 using namespace std;
 int N, L;
 int mymap[101][101];

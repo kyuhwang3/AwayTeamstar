@@ -1,129 +1,74 @@
 #include <iostream>
 #include <queue>
-#include <cstdio>
+#include <map>
 using namespace std;
+int N, K;
+int visited[200010];
+int count[200010];
+int dist[200010];
 
-
-int source, target;
-//int adj[100005];
-int dist[100005];
-int vis[100005];
-int counter;
-struct node{
-	int cur;
-	int count;
-};
-/*
-int iterateQueue(queue<node> q){
-	int count = 1;
-	while (!q.empty()){
-		node temp = q.front(); q.pop();
-		if (temp.count = minLength - 1){
-		if (temp.cur + 1 == target || temp.cur - 1 == target || temp.cur * 2 == target){
-			count ++;
-		}
-		}
+//dist
+int compdist(int s, int t){
+	if (dist[t] == dist[s] + 1){
+		count[t] = count[s] + count[t];
 	}
-	return count;
-}
-*/
-void dfs(int cur)
-{
-	//cout << cur << " ";
-	vis[cur] = 2;
-	if (cur - 1 >= 0 && vis[cur - 1] != 2){
-		if (cur - 1 == target){
-			counter ++;
-		}
-		dfs(cur - 1);
-	}
-	if (cur + 1 <= 100000 && vis[cur + 1] != 2){
-		if (cur + 1 == target){
-			counter ++;
-		}
-		dfs(cur + 1);
-	}
-	if (cur * 2  <= 100000 && vis[cur * 2] != 2){
-		if (cur * 2 == target){
-			counter ++;
-		}
-		dfs(cur * 2);
+	else if (dist[t] > dist[s] + 1){
+		count[t] = count[s];
+		dist[t] = dist[s] + 1;
 	}
 }
 
-void bfs(int src)
-{
-	queue<node> q;
-	node tempNode;
-	tempNode.cur = src;
-	tempNode.count = 0;
-	q.push(tempNode);
-	dist[src] = 0;
-	vis[src] = 1;
-	while(!q.empty()){
-		node cur=q.front(); q.pop();
-		tempNode.count = cur.count + 1;
-
-		if (cur.cur - 1 >= 0 && vis[cur.cur - 1] != 1){
-			if (dist[cur.cur] + 1 < dist[cur.cur - 1]){
-				dist[cur.cur - 1] = cur.count + 1;
-			} 
-
-			tempNode.cur = cur.cur - 1;
-			vis[cur.cur - 1] = 1;
-			if (cur.cur - 1 == target){
-				dist[target] = cur.count + 1;
-				return;
-			}
-			q.push(tempNode);
+void solve(){
+	queue<pair<int, int> > myQueue;
+	myQueue.push(make_pair(N, 0));
+	visited[N] = 1; count[N] = 1; dist[N] = 0;
+	pair<int, int> cur;
+	while (!myQueue.empty()){
+		cur = myQueue.front(); myQueue.pop();
+		//cout << cur.first << " " << cur.second << endl;
+		if (cur.first == K){
+			cout << dist[K] << endl;
+			cout << count[K] << endl;
 		}
-		if (cur.cur + 1 <= 100000 && vis[cur.cur + 1] != 1){
-			if (dist[cur.cur] + 1 < dist[cur.cur + 1]){
-				dist[cur.cur + 1] = cur.count + 1;
-			} 			
-			
-			tempNode.cur = cur.cur + 1;
-			vis[cur.cur + 1] = 1;
-			if (cur.cur + 1 == target){
-				dist[target] = cur.count + 1;
-				return;
+		if (cur.first + 1 <= 100000){
+			if (!visited[cur.first + 1]){
+				visited[cur.first + 1] = 1;
+				count[cur.first + 1] = count[cur.first];
+				dist[cur.first + 1] = dist[cur.first] + 1;
+				visited[cur.first + 1] = visited[cur.first] + 1;
+				myQueue.push(make_pair(cur.first + 1, cur.second + 1));				
 			}
-			q.push(tempNode);
-
-		}
-		if (cur.cur * 2 <= 100000 && vis[cur.cur * 2] != 1){
-			if (dist[cur.cur] + 1 < dist[cur.cur * 2]){
-				dist[cur.cur * 2] = cur.count + 1;
-			} 
-			
-			tempNode.cur = cur.cur * 2;
-			vis[cur.cur * 2] = 1;
-			if (cur.cur * 2 == target){
-				dist[target] = cur.count + 1;
-				return;
+			else{
+				compdist(cur.first, cur.first + 1);
 			}
-			q.push(tempNode);
-		}
+		} 
+		if (cur.first - 1 >= 0){
+			if (!visited[cur.first - 1]){
+				visited[cur.first - 1] = 1;
+				count[cur.first - 1] = count[cur.first];
+				dist[cur.first - 1] = dist[cur.first] + 1;
+				visited[cur.first - 1] = visited[cur.first] + 1;
+				myQueue.push(make_pair(cur.first - 1, cur.second + 1));	
+			}
+			else{
+				compdist(cur.first, cur.first - 1);
+			}
+		} 
+		if (cur.first * 2 <= 200000){
+			if (!visited[cur.first * 2]){
+				visited[cur.first * 2] = 1;
+				count[cur.first * 2] = count[cur.first];
+				dist[cur.first * 2] = dist[cur.first] + 1;
+				visited[cur.first * 1] = visited[cur.first] + 1;
+				myQueue.push(make_pair(cur.first * 2, cur.second + 1));	
+			}
+			else{
+				compdist(cur.first, cur.first * 2);
+			}
+		} 
 	}
 }
-
-int main()
-{
-	counter = 1;
-	for (int i = 0; i < 100005; ++i){
-		dist[i] = 100005;
-		vis[i] = 0;
-	}
-
-	cin >> source >> target;
-	dfs(source);
-	bfs(source);
-	/*
-	bfs(source);
-	for (int i = 0; i <= 25; ++i){
-		cout << i << ": " << propCount[i] << endl;
-	}
-	*/
-	cout << dist[target] << endl;
-	cout << counter << endl;;
+int main(){
+	cin >> N >> K;
+	solve();
 }

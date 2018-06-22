@@ -14,8 +14,8 @@ module.exports = function (app, Client) {
     app.post('/api/clients', function (req, res) {
         var client = new Client();
         client.name = req.body.name;
-        //console.log(JSON.parse(req.body.name));
-        console.log(req.body);
+        console.log(req.body.name);
+        //console.log(req.body);
         client.save(function(err){
             if(err){
                 console.error(err);

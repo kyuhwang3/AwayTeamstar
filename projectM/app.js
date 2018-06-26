@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // [CONFIGURE SERVER PORT]
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 
 // [CONFIGURE ROUTER]
 var Client = require('./models/client');

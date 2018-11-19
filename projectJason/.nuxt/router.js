@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-
+const _055ddab8 = () => import('../pages/projects.vue' /* webpackChunkName: "pages/projects" */).then(m => m.default || m)
+const _197abd52 = () => import('../pages/contact.vue' /* webpackChunkName: "pages/contact" */).then(m => m.default || m)
+const _d9dbc682 = () => import('../pages/about.vue' /* webpackChunkName: "pages/about" */).then(m => m.default || m)
+const _9a6c10f8 = () => import('../pages/index.vue' /* webpackChunkName: "pages/index" */).then(m => m.default || m)
 
 Vue.use(Router)
 
@@ -62,7 +65,26 @@ export function createRouter () {
     linkExactActiveClass: 'nuxt-link-exact-active',
     scrollBehavior,
     routes: [
-
+		{
+			path: "/projects",
+			component: _055ddab8,
+			name: "projects"
+		},
+		{
+			path: "/contact",
+			component: _197abd52,
+			name: "contact"
+		},
+		{
+			path: "/about",
+			component: _d9dbc682,
+			name: "about"
+		},
+		{
+			path: "/",
+			component: _9a6c10f8,
+			name: "index"
+		}
     ],
     
     
